@@ -2,7 +2,6 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { Resend } from 'resend'
 
-const resend = new Resend(process.env.RESEND_API_KEY)
 const DEFAULT_RECIPIENT = 'jeong_sooman01@eland.co.kr'
 
 function formatKRW(v: number) {
@@ -72,6 +71,7 @@ export async function POST(request: NextRequest) {
 </html>`
 
   try {
+    const resend = new Resend(process.env.RESEND_API_KEY)
     const { error } = await resend.emails.send({
       from: 'OPR 영업부 <onboarding@resend.dev>',
       to: [DEFAULT_RECIPIENT],
