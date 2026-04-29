@@ -32,7 +32,7 @@ export default function SalesChart({ data }: Props) {
             <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
             <XAxis dataKey="date" tick={{ fontSize: 11 }} />
             <YAxis tickFormatter={formatAxis} tick={{ fontSize: 11 }} width={60} />
-            <Tooltip formatter={(v: number) => formatTooltip(v)} labelFormatter={l => `날짜: ${l}`} />
+            <Tooltip formatter={(v) => typeof v === 'number' ? formatTooltip(v) : String(v)} labelFormatter={l => `날짜: ${l}`} />
             <Bar dataKey="actualSales" name="실 매출액" fill="#3B82F6" radius={[3, 3, 0, 0]} />
           </BarChart>
         </ResponsiveContainer>
@@ -46,7 +46,7 @@ export default function SalesChart({ data }: Props) {
             <XAxis dataKey="date" tick={{ fontSize: 11 }} />
             <YAxis yAxisId="left" tickFormatter={formatAxis} tick={{ fontSize: 11 }} width={60} />
             <YAxis yAxisId="right" orientation="right" tickFormatter={v => `${v.toFixed(0)}%`} tick={{ fontSize: 11 }} width={40} />
-            <Tooltip formatter={(v: number, name: string) => name === '이익률(%)' ? `${v.toFixed(1)}%` : formatTooltip(v)} />
+            <Tooltip formatter={(v, name) => typeof v === 'number' ? (name === '이익률(%)' ? `${v.toFixed(1)}%` : formatTooltip(v)) : String(v)} />
             <Legend wrapperStyle={{ fontSize: 12 }} />
             <Line yAxisId="left" type="monotone" dataKey="grossProfit" name="매출 총 이익" stroke="#10B981" strokeWidth={2} dot={false} />
             <Line yAxisId="right" type="monotone" dataKey="grossMargin" name="이익률(%)" stroke="#6366F1" strokeWidth={2} dot={false} strokeDasharray="4 2" />
