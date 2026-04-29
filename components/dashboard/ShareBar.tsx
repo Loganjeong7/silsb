@@ -17,7 +17,7 @@ declare global {
       isInitialized: () => boolean
       init: (key: string) => void
       Share: {
-        uploadImage: (options: { file: File[] }) => Promise<{ infos: { original: { url: string } }[] }>
+        uploadImage: (options: { file: File[] }) => Promise<{ infos: { original: { url: string } } }>
         sendDefault: (options: object) => void
       }
     }
