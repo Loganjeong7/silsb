@@ -73,3 +73,46 @@ create policy "authenticated insert email_logs" on email_logs for insert with ch
 
 -- default store
 insert into stores (store_name, region) values ('강서점', '서울') on conflict do nothing;
+
+-- ── 매장방송 테이블 ──────────────────────────────────────────
+
+-- 방송 목록
+create table if not exists broadcasts (
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid references auth.users(id) on delete cascade not null,
+  text text not null,
+  category text not null default '영업안내',
+  is_active boolean default true,
+  sort_order integer default 0,
+  created_at timestamptz default now()
+);
+
+-- 방송 이력
+create table if not exists broadcast_logs (
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid references auth.users(id) on delete cascade not null,
+  text text not null,
+  triggered_by text not null default 'manual',
+  played_at timestamptz default now()
+);
+
+-- 방송 설정
+create table if not exists broadcast_settings (
+  user_id uuid references auth.users(id) on delete cascade primary key,
+  interval_minutes integer default 10,
+  play_mode text default 'sequential',
+  tts_rate float default 0.9,
+  tts_volume float default 1.0,
+  tts_pitch float default 1.0,
+  updated_at timestamptz default now()
+);
+
+-- RLS 활성화
+alter table broadcasts enable row level security;
+alter table broadcast_logs enable row level security;
+alter table broadcast_settings enable row level security;
+
+-- 정책: 본인 데이터만 접근
+create policy "broadcasts: own data" on broadcasts for all using (auth.uid() = user_id);
+create policy "broadcast_logs: own data" on broadcast_logs for all using (auth.uid() = user_id);
+create policy "broadcast_settings: own data" on broadcast_settings for all using (auth.uid() = user_id);
